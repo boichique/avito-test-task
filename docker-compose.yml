@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - db_data:/var/lib/postgres/data
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER}" ]
+      interval: 1s
+      timeout: 5s
+
+  migrator:
+    build: migrations
+    command:
+      - migrate
+      - --conn-string
+      - postgres://${DB_USER}:${DB_PASS}@db:5432/${DB_NAME}
+      - --migrations
+      - /sql
+    depends_on:
+      db:
+        condition: service_healthy
+
+  server:
+    build: .
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: postgres://${DB_USER}:${DB_PASS}@db:5432/${DB_NAME}
+      PORT: 8080
+      LOCAL: ${LOCAL}
+      LOG_LEVEL: ${LOG_LEVEL}
+    depends_on:
+      - migrator
+
+volumes:
+  db_data:

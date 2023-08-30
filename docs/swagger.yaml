@@ -1,0 +1,198 @@
+definitions:
+  segments.CreateSegmentRequest:
+    properties:
+      slug:
+        type: string
+    type: object
+  segments.DeleteSegmentRequest:
+    properties:
+      slug:
+        type: string
+    type: object
+  segments.GetUserSegmentsRequest:
+    properties:
+      userID:
+        type: integer
+    type: object
+  segments.GetUserSegmentsResponse:
+    properties:
+      segments:
+        items:
+          $ref: '#/definitions/segments.Segment'
+        type: array
+    type: object
+  segments.Segment:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      slug:
+        type: string
+    type: object
+  segments.UpdateUserSegmentsRequest:
+    properties:
+      add_segments:
+        items:
+          type: string
+        type: array
+      delete_segments:
+        items:
+          type: string
+        type: array
+      userID:
+        type: integer
+    type: object
+  users.CreateUserRequest:
+    properties:
+      userID:
+        type: integer
+    type: object
+  users.DeleteUserRequest:
+    properties:
+      userID:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /segments:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a segment by slug
+      parameters:
+      - description: Segment request payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/segments.DeleteSegmentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete a segment
+    get:
+      consumes:
+      - application/json
+      description: Get segments by user ID
+      parameters:
+      - description: User segments request payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/segments.GetUserSegmentsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/segments.GetUserSegmentsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get segments by user ID
+    post:
+      consumes:
+      - application/json
+      description: Update segments by user ID
+      parameters:
+      - description: User segments request payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/segments.UpdateUserSegmentsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/segments.GetUserSegmentsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Update segments by user ID
+  /users:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user by user ID
+      parameters:
+      - description: User request payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/users.DeleteUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete a user
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the given user ID
+      parameters:
+      - description: User request payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/users.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create a new user
+swagger: "2.0"
