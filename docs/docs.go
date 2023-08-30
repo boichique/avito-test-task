@@ -15,65 +15,24 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/segments": {
-            "get": {
-                "description": "Get segments by user ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Get segments by user ID",
-                "parameters": [
-                    {
-                        "description": "User segments request payload",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/segments.GetUserSegmentsRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/segments.GetUserSegmentsResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
+        "/api/segments": {
             "post": {
-                "description": "Update segments by user ID",
+                "description": "Create a new segment with the given slug",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Update segments by user ID",
+                "summary": "Create a new segment",
                 "parameters": [
                     {
-                        "description": "User segments request payload",
+                        "description": "Segment request payload",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/segments.UpdateUserSegmentsRequest"
+                            "$ref": "#/definitions/segments.CreateSegmentRequest"
                         }
                     }
                 ],
@@ -81,7 +40,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/segments.GetUserSegmentsResponse"
+                            "type": "string"
                         }
                     },
                     "400": {
@@ -140,7 +99,109 @@ const docTemplate = `{
                 }
             }
         },
-        "/users": {
+        "/api/segments/{userID}": {
+            "get": {
+                "description": "Get segments by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get segments by user ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/segments.GetUserSegmentsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update segments by user ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Update segments by user ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Segments to add",
+                        "name": "add_segments",
+                        "in": "body",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    {
+                        "description": "Segments to delete",
+                        "name": "delete_segments",
+                        "in": "body",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/segments.GetUserSegmentsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/{userID}": {
             "post": {
                 "description": "Create a new user with the given user ID",
                 "consumes": [
@@ -152,13 +213,11 @@ const docTemplate = `{
                 "summary": "Create a new user",
                 "parameters": [
                     {
-                        "description": "User request payload",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/users.CreateUserRequest"
-                        }
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -193,13 +252,11 @@ const docTemplate = `{
                 "summary": "Delete a user",
                 "parameters": [
                     {
-                        "description": "User request payload",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/users.DeleteUserRequest"
-                        }
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -242,14 +299,6 @@ const docTemplate = `{
                 }
             }
         },
-        "segments.GetUserSegmentsRequest": {
-            "type": "object",
-            "properties": {
-                "userID": {
-                    "type": "integer"
-                }
-            }
-        },
         "segments.GetUserSegmentsResponse": {
             "type": "object",
             "properties": {
@@ -270,47 +319,8 @@ const docTemplate = `{
                 "deleted_at": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "integer"
-                },
                 "slug": {
                     "type": "string"
-                }
-            }
-        },
-        "segments.UpdateUserSegmentsRequest": {
-            "type": "object",
-            "properties": {
-                "add_segments": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "delete_segments": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "userID": {
-                    "type": "integer"
-                }
-            }
-        },
-        "users.CreateUserRequest": {
-            "type": "object",
-            "properties": {
-                "userID": {
-                    "type": "integer"
-                }
-            }
-        },
-        "users.DeleteUserRequest": {
-            "type": "object",
-            "properties": {
-                "userID": {
-                    "type": "integer"
                 }
             }
         }

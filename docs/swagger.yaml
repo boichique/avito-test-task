@@ -9,11 +9,6 @@ definitions:
       slug:
         type: string
     type: object
-  segments.GetUserSegmentsRequest:
-    properties:
-      userID:
-        type: integer
-    type: object
   segments.GetUserSegmentsResponse:
     properties:
       segments:
@@ -27,38 +22,13 @@ definitions:
         type: string
       deleted_at:
         type: string
-      id:
-        type: integer
       slug:
         type: string
-    type: object
-  segments.UpdateUserSegmentsRequest:
-    properties:
-      add_segments:
-        items:
-          type: string
-        type: array
-      delete_segments:
-        items:
-          type: string
-        type: array
-      userID:
-        type: integer
-    type: object
-  users.CreateUserRequest:
-    properties:
-      userID:
-        type: integer
-    type: object
-  users.DeleteUserRequest:
-    properties:
-      userID:
-        type: integer
     type: object
 info:
   contact: {}
 paths:
-  /segments:
+  /api/segments:
     delete:
       consumes:
       - application/json
@@ -86,17 +56,44 @@ paths:
           schema:
             type: string
       summary: Delete a segment
+    post:
+      consumes:
+      - application/json
+      description: Create a new segment with the given slug
+      parameters:
+      - description: Segment request payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/segments.CreateSegmentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create a new segment
+  /api/segments/{userID}:
     get:
       consumes:
       - application/json
       description: Get segments by user ID
       parameters:
-      - description: User segments request payload
-        in: body
-        name: request
+      - description: User ID
+        in: path
+        name: userID
         required: true
-        schema:
-          $ref: '#/definitions/segments.GetUserSegmentsRequest'
+        type: integer
       produces:
       - application/json
       responses:
@@ -113,17 +110,30 @@ paths:
           schema:
             type: string
       summary: Get segments by user ID
-    post:
+    put:
       consumes:
       - application/json
       description: Update segments by user ID
       parameters:
-      - description: User segments request payload
-        in: body
-        name: request
+      - description: User ID
+        in: path
+        name: userID
         required: true
+        type: integer
+      - description: Segments to add
+        in: body
+        name: add_segments
         schema:
-          $ref: '#/definitions/segments.UpdateUserSegmentsRequest'
+          items:
+            type: string
+          type: array
+      - description: Segments to delete
+        in: body
+        name: delete_segments
+        schema:
+          items:
+            type: string
+          type: array
       produces:
       - application/json
       responses:
@@ -140,18 +150,17 @@ paths:
           schema:
             type: string
       summary: Update segments by user ID
-  /users:
+  /api/users/{userID}:
     delete:
       consumes:
       - application/json
       description: Delete a user by user ID
       parameters:
-      - description: User request payload
-        in: body
-        name: request
+      - description: User ID
+        in: path
+        name: userID
         required: true
-        schema:
-          $ref: '#/definitions/users.DeleteUserRequest'
+        type: integer
       produces:
       - application/json
       responses:
@@ -173,12 +182,11 @@ paths:
       - application/json
       description: Create a new user with the given user ID
       parameters:
-      - description: User request payload
-        in: body
-        name: request
+      - description: User ID
+        in: path
+        name: userID
         required: true
-        schema:
-          $ref: '#/definitions/users.CreateUserRequest'
+        type: integer
       produces:
       - application/json
       responses:
